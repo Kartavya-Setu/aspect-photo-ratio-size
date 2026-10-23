@@ -1,0 +1,76 @@
+export type ImageFormat = 'image/webp' | 'image/jpeg' | 'image/png' | 'image/avif';
+
+export type AspectRatioOption = 
+  | 'free'
+  | '1:1'
+  | '4:3'
+  | '16:9'
+  | '9:16'
+  | '3:2'
+  | '2:3'
+  | '4:5'
+  | '21:9'
+  | 'custom';
+
+export interface CropArea {
+  x: number; // in pixels relative to original image
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface PlatformPreset {
+  id: string;
+  name: string;
+  category: 'social' | 'document' | 'web';
+  aspectRatio: string;
+  ratioValue: number; // width / height
+  targetWidth: number;
+  targetHeight: number;
+  recommendedMaxKb?: number;
+  recommendedFormat: ImageFormat;
+  description: string;
+}
+
+export interface ProcessConfig {
+  format: ImageFormat;
+  targetWidth: number;
+  targetHeight: number;
+  maintainAspectRatio: boolean;
+  sizeMode: 'target-kb' | 'manual-quality' | 'lossless';
+  targetKb: number;
+  quality: number; // 0.05 to 1.0
+  rotation: number; // 0, 90, 180, 270
+  flipHorizontal: boolean;
+  flipVertical: boolean;
+  backgroundColor: string; // for jpeg or non-transparent backgrounds
+  sharpening: boolean;
+  pixelated: boolean; // nearest neighbor vs bicubic
+}
+
+export interface ProcessedResult {
+  blob: Blob;
+  dataUrl: string;
+  width: number;
+  height: number;
+  sizeBytes: number;
+  sizeKb: number;
+  format: ImageFormat;
+  qualityUsed: number;
+  processingTimeMs: number;
+  compressionRatio: number; // e.g. -75%
+  fileName: string;
+}
+
+export interface OriginalImageInfo {
+  file: File | null;
+  dataUrl: string;
+  name: string;
+  width: number;
+  height: number;
+  sizeBytes: number;
+  sizeKb: number;
+  format: string;
+  aspectRatioString: string;
+  aspectRatioValue: number;
+}
