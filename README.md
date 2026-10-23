@@ -23,7 +23,7 @@
     <a href="#-the-problem-aspectshift-solves">Problem Solved</a> •
     <a href="#-core-services--features">Core Services</a> •
     <a href="#-visual-tour-of-services-screenshots">Visual Showcase</a> •
-    <a href="#-how-this-project-was-engineered-junior-developer-perspective">How It Was Developed</a> •
+    <a href="#-how-this-project-was-engineered-engineering-highlights">How It Was Developed</a> •
     <a href="#-tech-stack--architecture">Architecture</a> •
     <a href="#-getting-started">Run Locally</a>
   </p>
@@ -97,9 +97,9 @@ Once satisfied, click the highlighted **DOWNLOAD** button to export your file in
 
 ---
 
-## 🚀 How This Project Was Engineered (Junior Developer Perspective)
+## 🚀 How This Project Was Engineered (Engineering Highlights)
 
-As a junior developer, building AspectShift was an exercise in mastering **modern web standards, reactive frontend architecture, and browser performance optimization**. Here are the key technical challenges tackled and architectural patterns implemented:
+Building AspectShift was an exercise in mastering **modern web standards, reactive frontend architecture, and browser performance optimization**. Here are the key technical challenges tackled and architectural patterns implemented:
 
 ### 1. Standalone Angular 21 Architecture
 * Migrated from a legacy React prototype to a modern **Angular 21 standalone component architecture** without `NgModule` boilerplate.
@@ -262,8 +262,3 @@ vercel --prod
 
 This project is open-source and available under the [MIT License](LICENSE).
 
----
-
-<div align="center">
-  <sub>Built with ❤️ and dedication by a passionate Junior Frontend Developer exploring Angular 21 and modern web performance.</sub>
-</div>
