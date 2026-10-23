@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aspect-photo-ratio-size.vercel.app/sitemap.xml
