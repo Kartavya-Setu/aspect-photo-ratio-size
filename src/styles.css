@@ -10,6 +10,17 @@
     font-family: var(--font-sans);
     background-color: #ebe6dc;
     color: #1c1917;
+    overflow-x: hidden;
+  }
+
+  html {
+    overflow-x: hidden;
+  }
+
+  om-retro-grid {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 
   code, pre, kbd, samp {

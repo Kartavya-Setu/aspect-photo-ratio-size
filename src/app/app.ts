@@ -52,13 +52,19 @@ import { loadImage, processImage } from './utils/image-processor';
     GuidedTourComponent
   ],
   template: `
-    <om-retro-grid
-      [gridColor]="'#f59e0b'"
-      [fadeColor]="'#ebe6dc'"
-      [gridRotation]="'45deg'"
-      styleClass="min-h-screen bg-[#ebe6dc] p-3 sm:p-6 lg:p-8 font-sans selection:bg-[#f59e0b] selection:text-black overflow-x-hidden"
-    >
-      <div class="max-w-7xl mx-auto space-y-4 relative z-10">
+    <!-- Fixed Viewport Retro Grid Background -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+      <om-retro-grid
+        [gridColor]="'#f59e0b'"
+        [fadeColor]="'#ebe6dc'"
+        [gridRotation]="'45deg'"
+        styleClass="w-full h-full"
+      ></om-retro-grid>
+    </div>
+
+    <!-- Main Workstation & Knowledge Flow -->
+    <div class="relative z-10 min-h-screen p-3 sm:p-6 lg:p-8 font-sans selection:bg-[#f59e0b] selection:text-black">
+      <div class="max-w-7xl mx-auto space-y-4">
         <!-- Retro Workstation Header -->
         <app-retro-header
           [hasImage]="!!originalImage"
@@ -252,7 +258,7 @@ import { loadImage, processImage } from './utils/image-processor';
         <!-- SEO & Knowledge Base Guide Section -->
         <app-seo-guide-section></app-seo-guide-section>
       </div>
-    </om-retro-grid>
+    </div>
   `
 })
 export class App implements OnInit, OnDestroy {
