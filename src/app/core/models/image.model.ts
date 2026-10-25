@@ -1,35 +1,10 @@
 export type ImageFormat = 'image/webp' | 'image/jpeg' | 'image/png' | 'image/avif';
 
-export type AspectRatioOption = 
-  | 'free'
-  | '1:1'
-  | '4:3'
-  | '16:9'
-  | '9:16'
-  | '3:2'
-  | '2:3'
-  | '4:5'
-  | '21:9'
-  | 'custom';
-
 export interface CropArea {
   x: number; // in pixels relative to original image
   y: number;
   width: number;
   height: number;
-}
-
-export interface PlatformPreset {
-  id: string;
-  name: string;
-  category: 'social' | 'document' | 'web';
-  aspectRatio: string;
-  ratioValue: number; // width / height
-  targetWidth: number;
-  targetHeight: number;
-  recommendedMaxKb?: number;
-  recommendedFormat: ImageFormat;
-  description: string;
 }
 
 export interface ProcessConfig {

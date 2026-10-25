@@ -1,4 +1,4 @@
-import { PlatformPreset } from '../types';
+import { PlatformPreset, PresetRatioItem } from '../models';
 
 export const PLATFORM_PRESETS: PlatformPreset[] = [
   {
@@ -45,7 +45,7 @@ export const PLATFORM_PRESETS: PlatformPreset[] = [
     ratioValue: 16 / 9,
     targetWidth: 1280,
     targetHeight: 720,
-    recommendedMaxKb: 2048, // YouTube has 2MB strict limit!
+    recommendedMaxKb: 2048, // YouTube 2MB strict limit
     recommendedFormat: 'image/webp',
     description: 'Standard 16:9 thumb under 2MB limit'
   },
@@ -111,15 +111,15 @@ export const PLATFORM_PRESETS: PlatformPreset[] = [
   }
 ];
 
-export const ASPECT_RATIO_PRESETS = [
-  { id: 'free', label: 'Freeform', ratio: null },
-  { id: '1:1', label: '1:1 Square', ratio: 1 / 1 },
-  { id: '4:3', label: '4:3 Standard', ratio: 4 / 3 },
-  { id: '16:9', label: '16:9 Cinema / YT', ratio: 16 / 9 },
-  { id: '9:16', label: '9:16 Story / Reel', ratio: 9 / 16 },
-  { id: '3:2', label: '3:2 Photo 35mm', ratio: 3 / 2 },
-  { id: '2:3', label: '2:3 Vertical', ratio: 2 / 3 },
-  { id: '4:5', label: '4:5 IG Portrait', ratio: 4 / 5 },
-  { id: '21:9', label: '21:9 Ultrawide', ratio: 21 / 9 },
-  { id: 'custom', label: 'Custom W:H', ratio: null }
+export const ASPECT_RATIO_PRESETS: PresetRatioItem[] = [
+  { id: 'free', label: 'Freeform', ratio: null, sub: 'Free' },
+  { id: '1:1', label: '1:1 Square', ratio: 1 / 1, sub: 'Square' },
+  { id: '4:3', label: '4:3 Standard', ratio: 4 / 3, sub: 'Photo' },
+  { id: '16:9', label: '16:9 Cinema / YT', ratio: 16 / 9, sub: 'Video' },
+  { id: '9:16', label: '9:16 Story / Reel', ratio: 9 / 16, sub: 'Mobile' },
+  { id: '3:2', label: '3:2 Photo 35mm', ratio: 3 / 2, sub: 'DSLR' },
+  { id: '2:3', label: '2:3 Vertical', ratio: 2 / 3, sub: 'Portrait' },
+  { id: '4:5', label: '4:5 IG Portrait', ratio: 4 / 5, sub: 'Social' },
+  { id: '21:9', label: '21:9 Ultrawide', ratio: 21 / 9, sub: 'Cinema' },
+  { id: 'custom', label: 'Custom W:H', ratio: null, sub: 'Custom' }
 ];

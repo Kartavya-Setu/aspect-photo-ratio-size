@@ -6,8 +6,8 @@ import {
   LucideRotateCw,
   LucideRotateCcw
 } from '@lucide/angular';
-import { ASPECT_RATIO_PRESETS, PLATFORM_PRESETS } from '../../utils/presets';
-import { PlatformPreset } from '../../types';
+import { ASPECT_RATIO_PRESETS, PLATFORM_PRESETS } from '@core/constants';
+import { PlatformPreset } from '@core/models';
 
 @Component({
   selector: 'app-aspect-preset-bar',

@@ -15,8 +15,8 @@ import {
   LucideArrowDown,
   LucideDownload
 } from '@lucide/angular';
-import { OriginalImageInfo, ProcessedResult } from '../../types';
-import { formatBytes } from '../../utils/image-processor';
+import { OriginalImageInfo, ProcessedResult } from '@core/models';
+import { formatBytes } from '@core/services';
 
 @Component({
   selector: 'app-comparison-preview',

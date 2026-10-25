@@ -21,7 +21,7 @@ import {
   LucideZoomOut,
   LucideMove
 } from '@lucide/angular';
-import { CropArea } from '../../types';
+import { CropArea } from '@core/models';
 
 type HandleType = 'nw' | 'ne' | 'se' | 'sw' | 'n' | 'e' | 's' | 'w' | 'move';
 
@@ -325,7 +325,6 @@ export class InteractiveCropperComponent implements OnInit, OnChanges, OnDestroy
   displayedHeight = 400;
   scale = 1;
 
-  // Active drag tracking
   private isDragging = false;
   private dragHandle: HandleType | null = null;
   private startMouseX = 0;
