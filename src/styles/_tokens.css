@@ -1,0 +1,15 @@
+:root {
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Space Grotesk', sans-serif;
+  --color-retro-dark: #1c1917;
+  --color-retro-bg: #ebe6dc;
+  --color-retro-card: #f7f4ee;
+  --color-retro-amber: #f59e0b;
+  --color-retro-amber-hover: #fbbf24;
+  --color-retro-cyan: #06b6d4;
+  --color-retro-cyan-hover: #22d3ee;
+  --retro-border: 2px solid var(--color-retro-dark);
+  --retro-shadow-sm: 1px 1px 0px var(--color-retro-dark);
+  --retro-shadow-md: 3px 3px 0px var(--color-retro-dark);
+  --retro-shadow-lg: 4px 4px 0px var(--color-retro-dark);
+}

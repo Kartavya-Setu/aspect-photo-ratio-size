@@ -8,7 +8,7 @@ import {
   LucideSliders,
   LucideCircleCheck
 } from '@lucide/angular';
-import { ProcessConfig, ImageFormat } from '../../types';
+import { ProcessConfig, ImageFormat } from '@core/models';
 
 interface TargetSizePreset {
   label: string;

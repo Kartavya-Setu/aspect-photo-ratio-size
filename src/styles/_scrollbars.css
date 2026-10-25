@@ -1,0 +1,15 @@
+/* Custom scrollbars for retro console feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-retro-bg, #ebe6dc);
+  border-left: 1px solid var(--color-retro-dark, #1c1917);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-retro-dark, #1c1917);
+  border: 1px solid var(--color-retro-card, #f7f4ee);
+}

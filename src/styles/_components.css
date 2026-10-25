@@ -1,0 +1,112 @@
+/* Retro Border Utilities */
+.retro-border {
+  border: var(--retro-border);
+}
+
+.retro-border-t {
+  border-top: var(--retro-border);
+}
+
+.retro-border-b {
+  border-bottom: var(--retro-border);
+}
+
+.retro-border-l {
+  border-left: var(--retro-border);
+}
+
+.retro-border-r {
+  border-right: var(--retro-border);
+}
+
+/* Retro Card / Container Boxes */
+.retro-box {
+  background-color: var(--color-retro-card);
+  border: var(--retro-border);
+  box-shadow: var(--retro-shadow-md);
+}
+
+.retro-box-amber {
+  background-color: #fef3c7;
+  border: var(--retro-border);
+  box-shadow: var(--retro-shadow-md);
+}
+
+.retro-box-dark {
+  background-color: #1e232a;
+  color: #f1f5f9;
+  border: var(--retro-border);
+  box-shadow: var(--retro-shadow-md);
+}
+
+/* Retro Buttons */
+.retro-btn {
+  background-color: var(--color-retro-card);
+  border: var(--retro-border);
+  box-shadow: var(--retro-shadow-md);
+  transition: all 0.08s ease-in-out;
+  cursor: pointer;
+  user-select: none;
+}
+
+.retro-btn:hover:not(:disabled) {
+  background-color: #fffbeb;
+  transform: translate(-1px, -1px);
+  box-shadow: var(--retro-shadow-lg);
+}
+
+.retro-btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: var(--retro-shadow-sm);
+}
+
+.retro-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: var(--retro-shadow-sm);
+  transform: none;
+}
+
+.retro-btn-accent {
+  background-color: var(--color-retro-amber);
+  color: var(--color-retro-dark);
+  border: var(--retro-border);
+  box-shadow: var(--retro-shadow-md);
+  font-weight: 700;
+  transition: all 0.08s ease-in-out;
+  cursor: pointer;
+  user-select: none;
+}
+
+.retro-btn-accent:hover:not(:disabled) {
+  background-color: var(--color-retro-amber-hover);
+  transform: translate(-1px, -1px);
+  box-shadow: var(--retro-shadow-lg);
+}
+
+.retro-btn-accent:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: var(--retro-shadow-sm);
+}
+
+.retro-btn-cyan {
+  background-color: var(--color-retro-cyan);
+  color: #082f49;
+  border: var(--retro-border);
+  box-shadow: var(--retro-shadow-md);
+  font-weight: 700;
+  transition: all 0.08s ease-in-out;
+  cursor: pointer;
+  user-select: none;
+}
+
+.retro-btn-cyan:hover:not(:disabled) {
+  background-color: var(--color-retro-cyan-hover);
+  transform: translate(-1px, -1px);
+  box-shadow: var(--retro-shadow-lg);
+}
+
+.retro-btn-cyan:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: var(--retro-shadow-sm);
+}
