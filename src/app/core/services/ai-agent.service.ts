@@ -59,13 +59,41 @@ export class AiAgentService {
   private tryLocalHeuristics(prompt: string, naturalW = 1920, naturalH = 1080): AgentActionPlan | null {
     const p = prompt.toLowerCase();
 
-    // Target KB detection helper
+    // Target KB detection helper (handles "300 kb", "300 kv", "300k", "size should 300", "size 300", "under 300")
     const extractKb = (): number | null => {
-      const mbMatch = p.match(/(?:under|max|less\s+than|<|below)?\s*(\d+(?:\.\d+)?)\s*mb/);
+      const mbMatch = p.match(/(?:under|max|less\s+than|<|below|size\s*(?:is|should\s*(?:be)?)?)?\s*(\d+(?:\.\d+)?)\s*mb/);
       if (mbMatch) return Math.round(parseFloat(mbMatch[1]) * 1024);
 
-      const kbMatch = p.match(/(?:under|max|less\s+than|<|below)?\s*(\d+)\s*kb/);
+      const kbMatch = p.match(/(?:under|max|less\s+than|<|below|size\s*(?:is|should\s*(?:be)?)?)?\s*(\d+)\s*(?:kb|kv|k\b)/);
       if (kbMatch) return parseInt(kbMatch[1], 10);
+
+      const rawSizeMatch = p.match(/(?:size\s*(?:is|should\s*(?:be)?|under|below|max)?|under|max|less\s+than|<|below)\s*(\d+)(?!\s*(?:px|pixel|pixels))/);
+      if (rawSizeMatch) return parseInt(rawSizeMatch[1], 10);
+
+      return null;
+    };
+
+    // Dimension detection helper (handles "200x300", "200 x 300 px", "200 px", "200 pixel")
+    const extractDimensions = (): { width: number; height: number; ratioVal: number; ratioId: string } | null => {
+      const pairMatch = p.match(/(\d+)\s*(?:x|\*|by)\s*(\d+)(?:\s*(?:px|pixel|pixels))?/);
+      if (pairMatch) {
+        const w = parseInt(pairMatch[1], 10);
+        const h = parseInt(pairMatch[2], 10);
+        if (w > 0 && h > 0) return { width: w, height: h, ratioVal: w / h, ratioId: w === h ? '1:1' : 'custom' };
+      }
+
+      const singleMatch = p.match(/(\d+)\s*(?:px|pixel|pixels)/);
+      if (singleMatch) {
+        const val = parseInt(singleMatch[1], 10);
+        if (val > 0) {
+          if (p.includes('square') || p.includes('1:1')) {
+            return { width: val, height: val, ratioVal: 1.0, ratioId: '1:1' };
+          }
+          const currentRatio = naturalW / naturalH;
+          const h = Math.round(val / currentRatio);
+          return { width: val, height: Math.max(1, h), ratioVal: currentRatio, ratioId: 'free' };
+        }
+      }
 
       return null;
     };
@@ -182,6 +210,31 @@ export class AiAgentService {
         targetKb,
         format: extractFormat('image/png'),
         summary: `LinkedIn Banner (4:1 Ratio, 1584×396 PX, Max ${targetKb} KB)`,
+        source: 'preset-matcher'
+      };
+    }
+
+    // 8. Direct Custom Dimension & File Size Rule (e.g. "I want 200 px and size should 300", "200 pixel and size 300 KV")
+    const customDims = extractDimensions();
+    if (customDims || requestedKb) {
+      const targetKb = requestedKb || 300;
+      const ratioId = customDims ? customDims.ratioId : 'free';
+      const ratioVal = customDims ? customDims.ratioVal : (naturalW / naturalH);
+      const dims = customDims ? { width: customDims.width, height: customDims.height } : null;
+
+      const summaryParts: string[] = [];
+      if (dims) summaryParts.push(`${dims.width}×${dims.height} PX`);
+      if (requestedKb) summaryParts.push(`< ${targetKb} KB`);
+      summaryParts.push(requestedFormat === 'image/webp' ? 'WebP' : requestedFormat === 'image/png' ? 'PNG' : 'JPEG');
+
+      return {
+        ratioId,
+        aspectRatioValue: ratioVal,
+        targetDimensions: dims,
+        sizeMode: 'target-kb',
+        targetKb,
+        format: requestedFormat,
+        summary: `Custom Spec: ${summaryParts.join(', ')}`,
         source: 'preset-matcher'
       };
     }
@@ -317,19 +370,53 @@ Output JSON schema:
     if (p.includes('webp')) format = 'image/webp';
     if (p.includes('png')) format = 'image/png';
 
-    const kbMatch = p.match(/(\d+)\s*kb/);
-    if (kbMatch) targetKb = parseInt(kbMatch[1], 10);
-    const mbMatch = p.match(/(\d+)\s*mb/);
-    if (mbMatch) targetKb = parseInt(mbMatch[1], 10) * 1024;
+    // Extract KB / MB / raw size
+    const mbMatch = p.match(/(?:under|max|less\s+than|<|below|size\s*(?:is|should\s*(?:be)?)?)?\s*(\d+(?:\.\d+)?)\s*mb/);
+    if (mbMatch) targetKb = Math.round(parseFloat(mbMatch[1]) * 1024);
+    if (!targetKb) {
+      const kbMatch = p.match(/(?:under|max|less\s+than|<|below|size\s*(?:is|should\s*(?:be)?)?)?\s*(\d+)\s*(?:kb|kv|k\b)/);
+      if (kbMatch) targetKb = parseInt(kbMatch[1], 10);
+    }
+    if (!targetKb) {
+      const rawSizeMatch = p.match(/(?:size\s*(?:is|should\s*(?:be)?|under|below|max)?|under|max|less\s+than|<|below)\s*(\d+)(?!\s*(?:px|pixel|pixels))/);
+      if (rawSizeMatch) targetKb = parseInt(rawSizeMatch[1], 10);
+    }
+
+    // Extract Dimensions
+    let targetDimensions: { width: number; height: number } | null = null;
+    const pairMatch = p.match(/(\d+)\s*(?:x|\*|by)\s*(\d+)(?:\s*(?:px|pixel|pixels))?/);
+    if (pairMatch) {
+      const w = parseInt(pairMatch[1], 10);
+      const h = parseInt(pairMatch[2], 10);
+      if (w > 0 && h > 0) {
+        targetDimensions = { width: w, height: h };
+        ratioVal = w / h;
+        ratioId = w === h ? '1:1' : 'custom';
+      }
+    } else {
+      const singleMatch = p.match(/(\d+)\s*(?:px|pixel|pixels)/);
+      if (singleMatch) {
+        const val = parseInt(singleMatch[1], 10);
+        if (val > 0) {
+          const h = Math.round(val / (naturalW / naturalH));
+          targetDimensions = { width: val, height: Math.max(1, h) };
+        }
+      }
+    }
+
+    const summaryParts: string[] = [];
+    if (targetDimensions) summaryParts.push(`${targetDimensions.width}×${targetDimensions.height} PX`);
+    if (targetKb) summaryParts.push(`< ${targetKb} KB`);
+    summaryParts.push(format === 'image/webp' ? 'WebP' : format === 'image/png' ? 'PNG' : 'JPEG');
 
     return {
       ratioId,
       aspectRatioValue: ratioVal,
-      targetDimensions: null,
+      targetDimensions,
       sizeMode: targetKb ? 'target-kb' : 'quality',
       targetKb: targetKb || 200,
       format,
-      summary: `Auto-tuned: ${ratioId} ratio${targetKb ? `, < ${targetKb} KB` : ''}`,
+      summary: `Custom Spec: ${summaryParts.join(', ')}`,
       source: 'preset-matcher'
     };
   }
