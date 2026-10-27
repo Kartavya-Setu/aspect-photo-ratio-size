@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import {
+  AgentActionPlan,
   CropArea,
   OriginalImageInfo,
   PlatformPreset,
@@ -30,12 +31,14 @@ export class WorkstationStateService {
   readonly isProcessing = signal<boolean>(false);
   readonly activeStepTab = signal<'crop' | 'size' | 'inspect'>('crop');
   readonly isSampleImage = signal<boolean>(false);
+  readonly lastAgentPlan = signal<AgentActionPlan | null>(null);
 
   private debounceTimer: number | null = null;
 
   async handleImageFile(file: File, isSample = false): Promise<void> {
     try {
       this.isSampleImage.set(isSample);
+      this.lastAgentPlan.set(null);
       const dataUrl = await this.imageProcessor.readFileAsDataUrl(file);
       const img = await this.imageProcessor.loadImage(dataUrl);
 
@@ -189,6 +192,43 @@ export class WorkstationStateService {
     this.triggerProcessing();
   }
 
+  async applyAgentAction(plan: AgentActionPlan) {
+    this.lastAgentPlan.set(plan);
+
+    // 1. Set Aspect Ratio & Crop Coordinates
+    if (plan.ratioId === 'free') {
+      this.selectedRatioId.set('free');
+      this.aspectRatio.set(null);
+    } else {
+      this.selectedRatioId.set(plan.ratioId);
+      this.aspectRatio.set(plan.aspectRatioValue);
+      this.applyAspectRatioToCrop(plan.aspectRatioValue);
+    }
+
+    // 2. Set output format, budget, and dimension constraints
+    const currentConfig = this.config();
+    const updatedConfig: ProcessConfig = {
+      ...currentConfig,
+      format: plan.format,
+      maintainAspectRatio: true
+    };
+
+    if (plan.targetKb && plan.targetKb > 0) {
+      updatedConfig.sizeMode = 'target-kb';
+      updatedConfig.targetKb = plan.targetKb;
+    }
+
+    if (plan.targetDimensions) {
+      updatedConfig.targetWidth = plan.targetDimensions.width;
+      updatedConfig.targetHeight = plan.targetDimensions.height;
+    }
+
+    this.config.set(updatedConfig);
+    // Switch directly to inspect tab so user sees the live result & download ready
+    this.activeStepTab.set('inspect');
+    this.triggerProcessing();
+  }
+
   updateCrop(newCrop: CropArea) {
     this.crop.set(newCrop);
     const currentConfig = this.config();
@@ -261,5 +301,6 @@ export class WorkstationStateService {
     this.loadedImageElement.set(null);
     this.processedResult.set(null);
     this.isSampleImage.set(false);
+    this.lastAgentPlan.set(null);
   }
 }

@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "scripts": {
     "ng": "ng",
+    "config:env": "node scripts/set-env.js",
+    "prestart": "npm run config:env",
+    "predev": "npm run config:env",
+    "prebuild": "npm run config:env",
+    "postinstall": "npm run config:env",
     "start": "ng serve",
     "dev": "ng serve",
     "build": "ng build",

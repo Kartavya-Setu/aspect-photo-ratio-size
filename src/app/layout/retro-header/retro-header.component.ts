@@ -26,6 +26,9 @@ import {
             <img
               src="logo.png"
               alt="AspectShift Logo"
+              width="40"
+              height="40"
+              style="width: 40px; height: 40px; aspect-ratio: 1/1;"
               class="w-10 h-10 border-2 border-black object-cover shadow-[2px_2px_0px_#f59e0b] shrink-0"
             />
             <div>
