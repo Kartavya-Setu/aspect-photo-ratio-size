@@ -229,7 +229,7 @@ interface FaqItem {
       <!-- Retro Console Footer -->
       <footer class="retro-box bg-[#1c1917] text-stone-300 p-4 text-xs font-mono flex flex-col sm:flex-row items-center justify-between gap-3 border-2 border-black shadow-[3px_3px_0px_#1c1917]">
         <div class="flex items-center gap-2.5 flex-wrap">
-          <img src="logo.png" alt="AspectShift Logo" class="w-6 h-6 border border-stone-600 inline-block object-cover" />
+          <img src="logo.png" alt="AspectShift Logo" width="24" height="24" style="width: 24px; height: 24px; aspect-ratio: 1/1;" class="w-6 h-6 border border-stone-600 inline-block object-cover" />
           <span class="text-[#fbbf24] font-black tracking-wider drop-shadow-[0_0_8px_rgba(251,191,36,0.25)]">
             ASPECTSHIFT
           </span>

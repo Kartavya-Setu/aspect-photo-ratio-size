@@ -57,6 +57,7 @@ When users upload photos for **job portals, official visas, university admission
 | **7. Live Split Wiper** | Interactive real-time comparison between original and output. | Interactive split-slider wiper, side-by-side mode, instantaneous visual fidelity verification. |
 | **8. Real-Time Telemetry** | Technical metrics on byte savings and performance. | Exact byte sizes, size reduction percentage, output resolution, and canvas execution latency. |
 | **9. Guided Interactive Tour** | Automated step-by-step walkthrough with directional arrows. | Visual callout badges, animated arrows, step controls, auto-play, and intelligent demo reversion. |
+| **10. In-Browser AI Studio & Auto-Pilot** | Edge AI segmentation & face detection combined with natural language automation. | Selfies to official profile photos, 100% in-browser white/transparent background replacement, face-centered passport framing, strict KB budgets. |
 
 ---
 
@@ -193,8 +194,13 @@ git clone https://github.com/your-username/aspect-shift.git
 # 2. Navigate to project root
 cd aspect-shift
 
-# 3. Install dependencies
+# 3. Install dependencies (auto-generates environment files via postinstall)
 npm install
+
+# 4. (Optional) Configure Gemini API Key for AI Copilot
+cp .env.example .env
+# Edit .env and paste your GEMINI_API_KEY from Google AI Studio (https://aistudio.google.com/app/apikey)
+# Note: If no key is provided, AspectShift uses fast offline heuristic matching.
 ```
 
 ### Running Locally

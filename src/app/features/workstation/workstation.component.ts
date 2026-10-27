@@ -10,6 +10,7 @@ import { AspectPresetBarComponent } from './components/aspect-preset-bar/aspect-
 import { InteractiveCropperComponent } from './components/interactive-cropper/interactive-cropper.component';
 import { SizeTargetPanelComponent } from './components/size-target-panel/size-target-panel.component';
 import { ComparisonPreviewComponent } from './components/comparison-preview/comparison-preview.component';
+import { AiCommandBarComponent } from './components/ai-command-bar/ai-command-bar.component';
 import { WorkstationStateService, GuidedTourService } from '@core/services';
 import { PlatformPreset, ProcessConfig, CropArea } from '@core/models';
 
@@ -25,11 +26,15 @@ import { PlatformPreset, ProcessConfig, CropArea } from '@core/models';
     AspectPresetBarComponent,
     InteractiveCropperComponent,
     SizeTargetPanelComponent,
-    ComparisonPreviewComponent
+    ComparisonPreviewComponent,
+    AiCommandBarComponent
   ],
   template: `
     @if (state.originalImage() && state.loadedImageElement()) {
       <div class="space-y-4">
+        <!-- AI Command Copilot -->
+        <app-ai-command-bar></app-ai-command-bar>
+
         <!-- Mobile / Tablet Step Switcher -->
         <div class="lg:hidden flex items-center justify-between retro-box p-1 bg-[#1c1917] text-white font-mono text-xs">
           <button

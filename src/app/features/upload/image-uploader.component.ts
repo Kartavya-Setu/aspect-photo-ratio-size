@@ -49,6 +49,9 @@ interface SampleImage {
             <img
               src="logo.png"
               alt="AspectShift Logo"
+              width="80"
+              height="80"
+              style="width: 80px; height: 80px; aspect-ratio: 1/1;"
               class="w-20 h-20 border-2 border-black object-cover shadow-[4px_4px_0px_#f59e0b]"
             />
           </div>
