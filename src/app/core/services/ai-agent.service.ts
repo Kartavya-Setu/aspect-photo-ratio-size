@@ -10,9 +10,26 @@ export class AiAgentService {
   readonly lastPlan = signal<AgentActionPlan | null>(null);
   readonly errorMessage = signal<string | null>(null);
 
+  hasConfiguredApiKey(): boolean {
+    const key = this.getApiKey();
+    return !!(key && key.trim().length > 0);
+  }
+
+  setCustomApiKey(key: string): void {
+    if (key && key.trim().length > 0) {
+      localStorage.setItem('aspectshift_gemini_api_key', key.trim());
+    } else {
+      localStorage.removeItem('aspectshift_gemini_api_key');
+    }
+  }
+
+  getCustomApiKey(): string {
+    return localStorage.getItem('aspectshift_gemini_api_key') || '';
+  }
+
   private getApiKey(): string {
     const customKey = localStorage.getItem('aspectshift_gemini_api_key');
-    return (customKey && customKey.trim().length > 0) ? customKey.trim() : environment.geminiApiKey;
+    return (customKey && customKey.trim().length > 0) ? customKey.trim() : (environment.geminiApiKey || '');
   }
 
   /**
@@ -38,14 +55,22 @@ export class AiAgentService {
         return heuristicResult;
       }
 
-      // 2. Fall back to Gemini 3.5 Flash Lite API
+      // 2. If no Gemini API key is available, use smart client-side fallback without error
+      if (!this.hasConfiguredApiKey()) {
+        const fallbackResult = this.createFallbackPlan(cleanPrompt, currentImageWidth, currentImageHeight);
+        this.lastPlan.set(fallbackResult);
+        this.isAnalyzing.set(false);
+        return fallbackResult;
+      }
+
+      // 3. Fall back to Gemini 3.5 Flash Lite API
       const geminiResult = await this.callGeminiApi(cleanPrompt, currentImageWidth, currentImageHeight);
       this.lastPlan.set(geminiResult);
       this.isAnalyzing.set(false);
       return geminiResult;
     } catch (err: unknown) {
-      console.warn('AI Agent Gemini parsing error, applying fallback parser:', err);
-      // 3. Fallback extraction in case of network/quota issues
+      console.info('Switched to local adaptive parser:', err instanceof Error ? err.message : err);
+      // Fallback extraction in case of network/quota issues
       const fallbackResult = this.createFallbackPlan(cleanPrompt, currentImageWidth, currentImageHeight);
       this.lastPlan.set(fallbackResult);
       this.isAnalyzing.set(false);
@@ -327,7 +352,12 @@ Output JSON schema:
       throw new Error('Gemini returned an empty response.');
     }
 
-    const parsed = JSON.parse(rawJsonText);
+    let cleaned = rawJsonText.trim();
+    if (cleaned.startsWith('```')) {
+      cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
+    }
+
+    const parsed = JSON.parse(cleaned);
 
     return {
       ratioId: parsed.ratioId || 'free',
