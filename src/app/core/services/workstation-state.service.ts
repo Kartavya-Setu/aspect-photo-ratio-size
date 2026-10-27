@@ -289,7 +289,17 @@ export class WorkstationStateService {
     a.download = result.fileName;
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
+    setTimeout(() => {
+      try {
+        if (a.parentNode) {
+          a.parentNode.removeChild(a);
+        } else if (typeof a.remove === 'function') {
+          a.remove();
+        }
+      } catch {
+        // Safe against third-party browser extensions (e.g. activeContent.js) mutating temporary download nodes
+      }
+    }, 100);
   }
 
   clear() {

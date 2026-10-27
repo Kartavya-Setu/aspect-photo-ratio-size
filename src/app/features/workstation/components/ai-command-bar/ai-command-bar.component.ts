@@ -33,11 +33,66 @@ import { AiAgentService, WorkstationStateService } from '@core/services';
           </div>
         </div>
 
-        <div class="text-[11px] font-mono text-stone-400 flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full animate-pulse" [ngClass]="isBusy() ? 'bg-amber-400' : 'bg-emerald-400'"></span>
-          <span>{{ getStatusMessage() }}</span>
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            (click)="toggleKeyModal()"
+            class="px-2 py-0.5 text-[10px] font-mono border rounded-xs transition-colors cursor-pointer"
+            [ngClass]="agentService.hasConfiguredApiKey() ? 'border-stone-700 bg-stone-900 text-stone-400 hover:text-amber-400' : 'border-amber-500/80 bg-amber-950/60 text-amber-300'"
+            title="Configure Gemini API Key"
+          >
+            {{ agentService.hasConfiguredApiKey() ? '🔑 API KEY: ACTIVE' : '🔑 SET API KEY' }}
+          </button>
+
+          <div class="text-[11px] font-mono text-stone-400 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full animate-pulse" [ngClass]="isBusy() ? 'bg-amber-400' : 'bg-emerald-400'"></span>
+            <span>{{ getStatusMessage() }}</span>
+          </div>
         </div>
       </div>
+
+      <!-- Optional API Key Config Modal -->
+      @if (showKeyModal) {
+        <div class="p-3 bg-[#0d0b09] border border-amber-500/60 rounded-xs text-xs font-mono space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-amber-400 font-bold uppercase flex items-center gap-1.5">
+              <span>🔑</span>
+              <span>Google Gemini API Key</span>
+            </span>
+            <button type="button" (click)="showKeyModal = false" class="text-stone-400 hover:text-white cursor-pointer px-1">✕</button>
+          </div>
+          <p class="text-[11px] text-stone-400">
+            Saved securely in your browser's local storage. Used for custom natural language queries.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input
+              type="password"
+              [(ngModel)]="customKeyInput"
+              placeholder="Paste Gemini API key (AQ.Ab8...)"
+              class="flex-1 px-2.5 py-1.5 bg-stone-900 border border-stone-700 text-stone-100 rounded-xs text-xs outline-none focus:border-amber-400 font-mono"
+            />
+            <div class="flex gap-1.5">
+              <button
+                type="button"
+                (click)="saveCustomKey()"
+                class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-bold uppercase rounded-xs text-xs cursor-pointer"
+              >
+                Save
+              </button>
+              @if (agentService.hasConfiguredApiKey()) {
+                <button
+                  type="button"
+                  (click)="clearCustomKey()"
+                  class="px-2.5 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 rounded-xs text-xs cursor-pointer"
+                  title="Remove local key"
+                >
+                  Clear
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      }
 
       <!-- Command Input Bar -->
       <form (submit)="executePrompt()" class="flex flex-col sm:flex-row gap-2">
@@ -134,6 +189,26 @@ export class AiCommandBarComponent {
   readonly state = inject(WorkstationStateService);
 
   userPrompt = '';
+  showKeyModal = false;
+  customKeyInput = '';
+
+  toggleKeyModal() {
+    this.showKeyModal = !this.showKeyModal;
+    if (this.showKeyModal) {
+      this.customKeyInput = this.agentService.getCustomApiKey();
+    }
+  }
+
+  saveCustomKey() {
+    this.agentService.setCustomApiKey(this.customKeyInput);
+    this.showKeyModal = false;
+  }
+
+  clearCustomKey() {
+    this.agentService.setCustomApiKey('');
+    this.customKeyInput = '';
+    this.showKeyModal = false;
+  }
 
   readonly quickChips = [
     { label: '🏛️ SSC / Govt Exam (3.5:4.5 <50KB)', prompt: 'I am applying for SSC exam', icon: '🏛️' },
