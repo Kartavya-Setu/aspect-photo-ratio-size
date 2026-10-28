@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import {
   AgentActionPlan,
+  CropAnchor,
   CropArea,
   OriginalImageInfo,
   PlatformPreset,
@@ -133,7 +134,7 @@ export class WorkstationStateService {
     this.applyAspectRatioToCrop(customRatio);
   }
 
-  applyAspectRatioToCrop(ratio: number) {
+  applyAspectRatioToCrop(ratio: number, anchor: CropAnchor = 'center') {
     const loadedEl = this.loadedImageElement();
     if (!loadedEl) return;
 
@@ -153,12 +154,20 @@ export class WorkstationStateService {
 
     newW = Math.round(newW);
     newH = Math.round(newH);
-    const newX = Math.round((effW - newW) / 2);
-    const newY = Math.round((effH - newH) / 2);
+
+    // Calculate crop placement based on spatial anchor
+    let newX = Math.round((effW - newW) / 2);
+    let newY = Math.round((effH - newH) / 2);
+
+    if (anchor.includes('left')) newX = 0;
+    else if (anchor.includes('right')) newX = Math.max(0, effW - newW);
+
+    if (anchor.includes('top')) newY = 0;
+    else if (anchor.includes('bottom')) newY = Math.max(0, effH - newH);
 
     this.crop.set({
-      x: newX,
-      y: newY,
+      x: Math.max(0, newX),
+      y: Math.max(0, newY),
       width: newW,
       height: newH
     });
@@ -195,20 +204,43 @@ export class WorkstationStateService {
   async applyAgentAction(plan: AgentActionPlan) {
     this.lastAgentPlan.set(plan);
 
-    // 1. Set Aspect Ratio & Crop Coordinates
+    const currentConfig = this.config();
+    let updatedRotation = currentConfig.rotation;
+    let updatedFlipH = currentConfig.flipHorizontal;
+    let updatedFlipV = currentConfig.flipVertical;
+
+    if (typeof plan.rotation === 'number') {
+      updatedRotation = plan.rotation;
+    }
+    if (typeof plan.flipHorizontal === 'boolean') {
+      updatedFlipH = plan.flipHorizontal;
+    }
+    if (typeof plan.flipVertical === 'boolean') {
+      updatedFlipV = plan.flipVertical;
+    }
+
+    this.config.set({
+      ...currentConfig,
+      rotation: updatedRotation,
+      flipHorizontal: updatedFlipH,
+      flipVertical: updatedFlipV
+    });
+
+    // 1. Set Aspect Ratio & Crop Coordinates with anchor positioning
+    const anchor: CropAnchor = plan.cropAnchor || 'center';
     if (plan.ratioId === 'free') {
       this.selectedRatioId.set('free');
       this.aspectRatio.set(null);
     } else {
       this.selectedRatioId.set(plan.ratioId);
       this.aspectRatio.set(plan.aspectRatioValue);
-      this.applyAspectRatioToCrop(plan.aspectRatioValue);
+      this.applyAspectRatioToCrop(plan.aspectRatioValue, anchor);
     }
 
     // 2. Set output format, budget, and dimension constraints
-    const currentConfig = this.config();
+    const configAfterCrop = this.config();
     const updatedConfig: ProcessConfig = {
-      ...currentConfig,
+      ...configAfterCrop,
       format: plan.format,
       maintainAspectRatio: true
     };

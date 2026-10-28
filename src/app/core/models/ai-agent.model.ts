@@ -1,3 +1,14 @@
+export type CropAnchor =
+  | 'center'
+  | 'top'
+  | 'bottom'
+  | 'left'
+  | 'right'
+  | 'top-left'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-right';
+
 export interface AgentActionPlan {
   ratioId: string;
   aspectRatioValue: number;
@@ -10,7 +21,11 @@ export interface AgentActionPlan {
   format: 'image/jpeg' | 'image/webp' | 'image/png';
   summary: string;
   source: 'preset-matcher' | 'gemini-ai';
-  autoCenterSubject?: boolean;
+  rotation?: number;
+  flipHorizontal?: boolean;
+  flipVertical?: boolean;
+  cropAnchor?: CropAnchor;
+  outOfScopeNotice?: string | null;
 }
 
 export interface AgentExecutionStatus {
