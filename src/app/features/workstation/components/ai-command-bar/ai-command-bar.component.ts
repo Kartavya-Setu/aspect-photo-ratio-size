@@ -158,6 +158,12 @@ import { AiAgentService, WorkstationStateService } from '@core/services';
               <div class="text-stone-300 text-[11px] mt-0.5">
                 {{ plan.summary }}
               </div>
+              @if (plan.outOfScopeNotice) {
+                <div class="mt-2 p-2 bg-amber-950/60 border border-amber-500/50 rounded-xs flex items-start gap-1.5 text-[11px] text-amber-200">
+                  <span class="text-amber-400 font-bold shrink-0">💡 NOTE:</span>
+                  <span class="leading-relaxed">{{ plan.outOfScopeNotice }}</span>
+                </div>
+              }
             </div>
           </div>
 
@@ -235,9 +241,10 @@ export class AiCommandBarComponent {
     const original = this.state.originalImage();
     const naturalW = original?.width || 1920;
     const naturalH = original?.height || 1080;
+    const sizeBytes = original?.sizeBytes || 1024 * 500;
 
     try {
-      const plan = await this.agentService.parseUserIntent(this.userPrompt, naturalW, naturalH);
+      const plan = await this.agentService.parseUserIntent(this.userPrompt, naturalW, naturalH, sizeBytes);
       await this.state.applyAgentAction(plan);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to analyze requirements.';
